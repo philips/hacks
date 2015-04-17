@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
 	"path"
 	"time"
@@ -31,6 +33,12 @@ func cp(dst, src string) error {
 func main() {
 	dataDir := os.Args[1]
 	backupDir := os.Args[2]
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("request from %v\n", r.RemoteAddr)
+		w.Write([]byte("OK\n"))
+	})
+	go http.ListenAndServe(":5000", nil)
 
 	for {
 		info, err := ioutil.ReadDir(dataDir)
