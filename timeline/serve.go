@@ -120,6 +120,7 @@ func parseData() {
 }
 
 func myhandler(w http.ResponseWriter, req *http.Request) {
+	parseData()
 	log.Printf("got api request")
 	b, err := json.Marshal(callEvents)
 	if err != nil {
