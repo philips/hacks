@@ -15,7 +15,7 @@ $ curl -X POST localhost:8080/v1/example/echo -H "Content-Type: text/plain"  -d 
 ```
 
 
-Huge thanks to the hard work people have put into the [Go gRPC bindings] and [gRPC to JSON Gateway][grpcgateway]
+Huge thanks to the hard work people have put into the [Go gRPC bindings][gogrpc] and [gRPC to JSON Gateway][grpcgateway]
 
 [gogrpc]: https://github.com/grpc/grpc-go
 [grpcgateway]: https://github.com/gengo/grpc-gateway
