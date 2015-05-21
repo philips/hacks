@@ -1,8 +1,19 @@
 ## syscalls
 
 ```
+toolbox
 ps aux | grep ssh
 strace -p 
+```
+
+Inside toolbox:
+```
+md5sum /usr/lib64/libm.so.6
+```
+
+Outside toolbox: 
+```
+md5sum /usr/lib64/libm.so.6
 ```
 
 ## omaha
