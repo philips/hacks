@@ -27,14 +27,14 @@ cd /sys/cgroups/
 ## docker 
 
 ```
-ncat -vlk 1111 -c 'ncat -U /var/run/fleet.sock' &
+systemd-run ncat -vlk 1111 -c 'ncat -U /var/run/fleet.sock'
 curl localhost:1111/containers/json
 ```
 
 ## fleet
 
 ```
-ncat -vlk 1337 -c 'ncat -U /var/run/fleet.sock' &
+systemd-run ncat -vlk 1337 -c 'ncat -U /var/run/fleet.sock'
 curl http://localhost:1337/fleet/v1/state?alt=json
 ```
 
