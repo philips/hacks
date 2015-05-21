@@ -22,12 +22,16 @@ md5sum /usr/lib64/libm.so.6
 journalctl -u update-engine
 ```
 
+application: CoreUpdate, devserver
+
 ## namespaces
 
 ```
 ps aux | grep nginx
 nsenter -n -t 847
 ```
+
+application: docker, nspawn, rkt
 
 ## cgroups
 
@@ -36,12 +40,16 @@ cd /sys/fs/cgroups/
 cat /sys/fs/cgroup/memory/system.slice/etcd2.service/memory.limit_in_bytes
 ```
 
+applications: cAdvisor, rkt, nspawn, docker
+
 ## docker 
 
 ```
-systemd-run ncat -vlk 1111 -c 'ncat -U /var/run/fleet.sock'
+systemd-run ncat -vlk 1111 -c 'ncat -U /var/run/docker.sock'
 curl localhost:1111/containers/json
 ```
+
+applications: kubernetes, docker client
 
 ## fleet
 
@@ -50,6 +58,8 @@ systemd-run ncat -vlk 1337 -c 'ncat -U /var/run/fleet.sock'
 curl http://localhost:1337/fleet/v1/state?alt=json
 ```
 
+applications: CoreGI, fleetctl
+
 ## dbus + systemd
 
 ```
@@ -57,12 +67,16 @@ dbus-monitor --system
 sudo systemd-run sleep 60
 ```
 
+applications: systemctl, fleet, kubernetes
+
 ## etcd
 
 ```
 etcdctl --debug -o json set foobar baz
 etcdctl --debug -o json set --swap-with-index 11282 foobar baz2
 ```
+
+applications: locksmith, kubernetes, vulcan, etc
 
 ## k8s
 
@@ -83,3 +97,5 @@ kubectl resize --replicas=2 rc my-nginx
 ```
 kubectl expose rc my-nginx --port=80
 ```
+
+applications: kubectl, dashboards, automation software
