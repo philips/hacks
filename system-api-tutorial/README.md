@@ -21,7 +21,8 @@ nsenter -n -t 847
 ## cgroups
 
 ```
-cd /sys/cgroups/
+cd /sys/fs/cgroups/
+cat /sys/fs/cgroup/memory/system.slice/etcd2.service/memory.limit_in_bytes
 ```
 
 ## docker 
