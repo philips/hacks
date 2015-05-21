@@ -38,6 +38,7 @@ application: docker, nspawn, rkt
 ```
 cd /sys/fs/cgroups/
 cat /sys/fs/cgroup/memory/system.slice/etcd2.service/memory.limit_in_bytes
+cat /sys/fs/cgroup/memory/system.slice/etcd2.service/memory.memsw.usage_in_bytes
 ```
 
 applications: cAdvisor, rkt, nspawn, docker
