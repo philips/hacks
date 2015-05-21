@@ -47,25 +47,25 @@ applications: cAdvisor, rkt, nspawn, docker
 
 ```
 systemd-run ncat -vlk 1111 -c 'ncat -U /var/run/docker.sock'
+```
+
+```
+docker ps
+curl localhost:1111/containers/json
+```
+
+```
+docker images
 curl localhost:1111/containers/json
 ```
 
 applications: kubernetes, docker client
 
-## fleet
-
-```
-systemd-run ncat -vlk 1337 -c 'ncat -U /var/run/fleet.sock'
-curl http://localhost:1337/fleet/v1/state?alt=json
-```
-
-applications: CoreGI, fleetctl
-
 ## dbus + systemd
 
 ```
 dbus-monitor --system
-sudo systemd-run sleep 60
+sudo systemd-run rkt run coreos.com/etcd,version=v2.0.10
 ```
 
 applications: systemctl, fleet, kubernetes
@@ -100,3 +100,17 @@ kubectl expose rc my-nginx --port=80
 ```
 
 applications: kubectl, dashboards, automation software
+
+## fleet
+
+```
+systemd-run ncat -vlk 1337 -c 'ncat -U /var/run/fleet.sock'
+```
+
+```
+fleetctl list-units
+curl http://localhost:1337/fleet/v1/state?alt=json
+```
+
+applications: CoreGI, fleetctl
+
