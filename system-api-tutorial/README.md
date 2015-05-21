@@ -91,6 +91,13 @@ etcdctl --debug -o json set --swap-with-index 11282 foobar baz2
 
 applications: locksmith, kubernetes, vulcan, etc
 
+## flannel
+
+```
+etcdctl get /coreos.com/network/config
+etcdctl ls /coreos.com/network/subnets
+```
+
 ## k8s
 
 ```
