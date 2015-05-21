@@ -70,6 +70,18 @@ sudo systemd-run rkt run coreos.com/etcd,version=v2.0.10
 
 applications: systemctl, fleet, kubernetes
 
+## host configuration
+
+vagrant:
+```
+cat /var/lib/coreos-vagrant/vagrantfile-user-data
+```
+
+aws:
+```
+curl http://169.254.169.254/latest/meta-data/
+```
+
 ## etcd
 
 ```
