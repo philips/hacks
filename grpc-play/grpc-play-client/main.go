@@ -2,7 +2,10 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net"
 	"os"
+	"time"
 
 	pb "github.com/philips/hacks/grpc-play/proto"
 	"golang.org/x/net/context"
@@ -38,6 +41,7 @@ func main() {
 		}
 		opts = append(opts, grpc.WithTransportCredentials(creds))
 	}
+	opts = append(opts, grpc.WithDialer(httpDial))
 	conn, err := grpc.Dial(*serverAddr, opts...)
 	if err != nil {
 		grpclog.Fatalf("fail to dial: %v", err)
@@ -47,4 +51,32 @@ func main() {
 
 	msg, err := client.Echo(context.Background(), &pb.StringMessage{os.Args[1]})
 	println(msg.Value)
+}
+
+func httpDial(addr string, timeout time.Duration) (net.Conn, error) {
+	log.Println("dial...")
+	conn, err := net.Dial("tcp", addr)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println("write HTTP line")
+	_, err = conn.Write([]byte("GET /grpc HTTP/1.1\r\n"))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println("write Header line")
+	_, err = conn.Write([]byte("HOST: " + addr + "\r\n\r\n"))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	// handshake
+	b := make([]byte, 2)
+	_, err = conn.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
 }

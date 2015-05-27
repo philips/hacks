@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 
@@ -37,9 +38,6 @@ func newServer() *myService {
 
 func proxy() {
 	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	mux := runtime.NewServeMux()
 	err := gw.RegisterYourServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%d", *port))
 	if err != nil {
@@ -47,27 +45,48 @@ func proxy() {
 		return
 	}
 
-	err = http.ListenAndServe(fmt.Sprintf(":%d", *proxyPort), mux)
-	fmt.Printf("proxy: %v\n", err)
+	http.Handle("/", mux)
 	return
 }
 
-func serve(opts []grpc.ServerOption) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		grpclog.Fatalf("failed to listen: %v", err)
-	}
-
+func serve(opts []grpc.ServerOption, ch chan net.Conn) {
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterYourServiceServer(grpcServer, newServer())
 
-	err = grpcServer.Serve(lis)
-	fmt.Printf("proxy: %v\n", err)
+	grpcServer.Serve(&grpcListener{ch: ch})
 	return
 }
 
 func main() {
 	flag.Parse()
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	lch := make(chan net.Conn, 128)
+
+	http.HandleFunc("/grpc", func(w http.ResponseWriter, r *http.Request) {
+		hj, ok := w.(http.Hijacker)
+		if !ok {
+			http.Error(w, "webserver doesn't support hijacking", http.StatusInternalServerError)
+			return
+		}
+		conn, rwbuf, err := hj.Hijack()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// handshake
+		rwbuf.Write([]byte("OK"))
+		rwbuf.Flush()
+		log.Println("accept grpc")
+		lch <- conn
+	})
+
+	go http.Serve(lis, nil)
+
 	var opts []grpc.ServerOption
 	if *tls {
 		creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
@@ -77,8 +96,26 @@ func main() {
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
 
-	go serve(opts)
-	fmt.Printf("grpc on port: %d\n", *port)
-	fmt.Printf("rest on port: %d\n", *proxyPort)
-	proxy()
+	fmt.Printf("port: %d\n", *port)
+	go serve(opts, lch)
+	go proxy()
+	select {}
+}
+
+type grpcListener struct {
+	ch   chan net.Conn
+	addr net.Addr
+}
+
+func (gl *grpcListener) Accept() (net.Conn, error) {
+	return <-gl.ch, nil
+}
+
+func (gl *grpcListener) Close() error {
+	close(gl.ch)
+	return nil
+}
+
+func (gl *grpcListener) Addr() net.Addr {
+	return gl.addr
 }
