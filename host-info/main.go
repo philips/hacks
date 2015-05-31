@@ -1,12 +1,14 @@
 package main
 
 import (
+	"io"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"strings"
+	"sync/atomic"
 	"text/template"
 
 	"github.com/philips/hacks/host-info/Godeps/_workspace/src/github.com/dgryski/go-identicon"
@@ -21,6 +23,7 @@ const (
 	<body>
 		<img style="float: right; padding: 30px; position: relative; width: 30%; display: inline;" src="/icons/{{.Hostname}}.png" />
 		<h1>{{.Hostname}}</h1>
+		<p>You are visitor: {{.VisitCount}}</p>
 		<h2>Networking</h2>
 		{{range .Interfaces}}
 			<h3>{{.Name}}</h3>
@@ -37,6 +40,7 @@ const (
 type Host struct {
 	Hostname   string
 	Interfaces []net.Interface
+	VisitCount uint64
 }
 
 func NewHost() Host {
@@ -52,6 +56,18 @@ func NewHost() Host {
 	interfaces, _ := net.Interfaces()
 	h.Interfaces = interfaces
 	return h
+}
+
+func (h *Host) Write(w io.Writer) {
+	atomic.AddUint64(&h.VisitCount, 1)
+	tmpl, err := template.New("index").Parse(home)
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.Execute(w, h)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func iconHandler(w http.ResponseWriter, r *http.Request) {
@@ -94,14 +110,7 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("request from %v\n", r.RemoteAddr)
-		tmpl, err := template.New("index").Parse(home)
-		if err != nil {
-			panic(err)
-		}
-		err = tmpl.Execute(w, hostInfo)
-		if err != nil {
-			panic(err)
-		}
+		hostInfo.Write(w)
 	})
 	http.HandleFunc("/icons/", iconHandler)
 	log.Printf("listening on %v", addr)
