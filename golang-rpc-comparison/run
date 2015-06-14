@@ -1,1 +1,11 @@
-go test ./grpc/ -test.bench . -test.benchmem
+#!/bin/sh
+
+TESTS="restish grpc"
+
+if [ $# -ne 0 ]; then
+	TESTS=$@
+fi
+
+for i in $TESTS; do
+	go test ./${i}/ -test.bench . -test.benchmem
+done
