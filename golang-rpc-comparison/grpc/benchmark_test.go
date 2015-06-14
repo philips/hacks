@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
+	testpb "github.com/philips/hacks/golang-rpc-comparison/pbpayload"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	testpb "google.golang.org/grpc/benchmark/grpc_testing"
 	"google.golang.org/grpc/benchmark/stats"
 	"google.golang.org/grpc/grpclog"
 )

@@ -32,7 +32,7 @@
  */
 
 /*
-Package grpb implements the building blocks to setup end-to-end gRPC benchmarks.
+Package grpc implements the building blocks to setup end-to-end gRPC benchmarks.
 */
 package grpc
 
@@ -41,9 +41,9 @@ import (
 	"math"
 	"net"
 
+	testpb "github.com/philips/hacks/golang-rpc-comparison/pbpayload"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	testpb "google.golang.org/grpc/benchmark/grpc_testing"
 	"google.golang.org/grpc/grpclog"
 )
 
