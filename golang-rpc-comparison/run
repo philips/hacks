@@ -1,0 +1,1 @@
+go test ./grpc/ -test.bench . -test.benchmem
