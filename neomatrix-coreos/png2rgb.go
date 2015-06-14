@@ -31,7 +31,12 @@ func main() {
 			ra, ga, ba, _ := m.At(x, y).RGBA()
 			c := colorful.Color{float64(ra) / 65536.0, float64(ga) / 65536.0, float64(ba) / 65536.0}
 			r, g, b := c.RGB255()
-			fmt.Printf("0x%x, 0x%x, 0x%x\n", r, g, b)
+			if r == 0 && b == 0 && g == 0 {
+				r = 255
+				g = 255
+				b = 255
+			}
+			fmt.Printf("matrix.drawPixel(%d, %x, matrix.Color(0x%x, 0x%x, 0x%x));\n", x, y, r, g, b)
 		}
 	}
 
