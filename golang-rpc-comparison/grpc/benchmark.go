@@ -47,30 +47,12 @@ import (
 	"google.golang.org/grpc/grpclog"
 )
 
-func newPayload(t testpb.PayloadType, size int) *testpb.Payload {
-	if size < 0 {
-		grpclog.Fatalf("Requested a response with invalid length %d", size)
-	}
-	body := make([]byte, size)
-	switch t {
-	case testpb.PayloadType_COMPRESSABLE:
-	case testpb.PayloadType_UNCOMPRESSABLE:
-		grpclog.Fatalf("PayloadType UNCOMPRESSABLE is not supported")
-	default:
-		grpclog.Fatalf("Unsupported payload type: %d", t)
-	}
-	return &testpb.Payload{
-		Type: t,
-		Body: body,
-	}
-}
-
 type testServer struct {
 }
 
 func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 	return &testpb.SimpleResponse{
-		Payload: newPayload(in.ResponseType, int(in.ResponseSize)),
+		Payload: testpb.NewPayload(in.ResponseType, int(in.ResponseSize)),
 	}, nil
 }
 
@@ -85,7 +67,7 @@ func (s *testServer) StreamingCall(stream testpb.TestService_StreamingCallServer
 			return err
 		}
 		if err := stream.Send(&testpb.SimpleResponse{
-			Payload: newPayload(in.ResponseType, int(in.ResponseSize)),
+			Payload: testpb.NewPayload(in.ResponseType, int(in.ResponseSize)),
 		}); err != nil {
 			return err
 		}
@@ -110,7 +92,7 @@ func StartServer(addr string) (string, func()) {
 
 // DoUnaryCall performs an unary RPC with given stub and request and response sizes.
 func DoUnaryCall(tc testpb.TestServiceClient, reqSize, respSize int) {
-	pl := newPayload(testpb.PayloadType_COMPRESSABLE, reqSize)
+	pl := testpb.NewPayload(testpb.PayloadType_COMPRESSABLE, reqSize)
 	req := &testpb.SimpleRequest{
 		ResponseType: pl.Type,
 		ResponseSize: int32(respSize),
@@ -123,7 +105,7 @@ func DoUnaryCall(tc testpb.TestServiceClient, reqSize, respSize int) {
 
 // DoStreamingRoundTrip performs a round trip for a single streaming rpc.
 func DoStreamingRoundTrip(tc testpb.TestServiceClient, stream testpb.TestService_StreamingCallClient, reqSize, respSize int) {
-	pl := newPayload(testpb.PayloadType_COMPRESSABLE, reqSize)
+	pl := testpb.NewPayload(testpb.PayloadType_COMPRESSABLE, reqSize)
 	req := &testpb.SimpleRequest{
 		ResponseType: pl.Type,
 		ResponseSize: int32(respSize),

@@ -12,7 +12,12 @@ The metrics used for usefulness include:
 - memory usage
 - language interoperability
 - client generation
- 
+
+Things that won't be covered
+
+- resiliancy to network partitions and latency
+- error handling mechanismsj
+
 The methods of analysis will be benchmarks, research, and educated guesses.
 
 ## Options Considered
