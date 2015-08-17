@@ -1,0 +1,18 @@
+{
+    "acKind": "ImageManifest",
+    "acVersion": "0.7.0",
+    "app": {
+        "exec": [
+            "/host-info"
+        ],
+        "group": "0",
+        "user": "0"
+    },
+    "labels": [
+        {
+            "name": "git",
+            "value": "e4a790f7c8d37752f48972ee65d863ea3ba348bd"
+        }
+    ],
+    "name": "example.com/host-info"
+}
