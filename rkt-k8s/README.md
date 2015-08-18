@@ -16,7 +16,7 @@ actool build --overwrite example.com/host-info www-data/host-info-latest-linux-a
 Sign the ACI
 
 ```
-gpg --sign --detach www-data/host-info-latest-linux-amd64.aci
+gpg --sign --armor --detach www-data/host-info-latest-linux-amd64.aci
 ```
 
 ## Build up the index.html
