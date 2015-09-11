@@ -1,4 +1,10 @@
+slides: https://speakerdeck.com/philips/etcd-at-containercon-2015
+
 # locksmith - coordinate cluster reboots
+
+- Homepage: https://github.com/coreos/locksmith
+
+We will use a copy of coreos-vagrant to test this out. Follow instructions here: https://github.com/coreos/coreos-vagrant
 
 ```
 cd coreos-vagrant
@@ -10,6 +16,11 @@ etcdctl get /coreos.com/updateengine/rebootlock/semaphore
 ```
 
 # skydns - server up DNS from configuration files
+
+- Homepage: https://github.com/skynetservices/skydns
+
+First, download the latest release and follow the instructions at the bottom of the page for a single member cluster running on localhost. https://github.com/coreos/etcd/releases
+
 
 ```
 export ETCD_MACHINES='http://127.0.0.1:2379'
@@ -31,6 +42,8 @@ dig -p 5355 @127.0.0.1 SRV production.east.skydns.local
 ```
 
 # confd - generate configuration files from etcd
+
+- Homepage: https://github.com/kelseyhightower/confd
 
 ```
 $ cat confd/conf.d/myconfig.toml
@@ -55,6 +68,8 @@ confd -onetime -backend etcd -node 127.0.0.1:2379 -confdir confd
 ```
 
 # vulcand - an http load balancer
+
+- Homepage: https://github.com/mailgun/vulcand
 
 ```
 vulcand  -etcd=http://localhost:2379 -logSeverity=INFO
@@ -91,7 +106,9 @@ boom http://localhost:8181
 
 # kubernetes - service discovery and load balancing
 
-example https://github.com/kubernetes/kubernetes/tree/master/examples/https-nginx
+- Homepage: kubernetes.io
+- get up and running: https://coreos.com/blog/introducing-the-kubelet-in-coreos/
+- example app: https://github.com/kubernetes/kubernetes/tree/master/examples/https-nginx
 
 ```
 ./kubectl create -f secret.json
