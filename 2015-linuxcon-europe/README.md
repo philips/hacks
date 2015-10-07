@@ -1,3 +1,7 @@
+# Slides
+
+https://speakerdeck.com/philips/coreos-plus-kubernetes-at-linuxcon-europe
+
 # Setup CoreOS + Kubernetes
 
 Find the docs and set it up:
