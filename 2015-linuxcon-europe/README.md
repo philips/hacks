@@ -20,4 +20,16 @@ kubectl stop host-info
 watch -n 0.2 curl http://172.17.4.202:32430/
 ```
 
+# Create a new namespace
+
+kubectl create -f namespace/namespace-guestbook.yaml
+
 # Run a more complex service
+
+This is going to setup a three tier app with a load balancer, web app, and database.
+
+```
+for i in *.json; do kubectl create --namespace=guestbook -f ${i}; done
+```
+
+Visit http://172.17.4.202:30002/
