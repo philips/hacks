@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/base64"
-	"errors"
-	"fmt"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
+
+	"encoding/base64"
+	"errors"
+	"fmt"
 	"net"
 	"os"
 	"text/tabwriter"
@@ -30,7 +31,7 @@ func agentFromAuthSock() (agent.Agent, error) {
 func listKeys(a agent.Agent) {
 	keys, err := a.List()
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -47,13 +48,13 @@ func listKeys(a agent.Agent) {
 func sign(a agent.Agent, b string) {
 	keys, err := a.List()
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	data, err := base64.StdEncoding.DecodeString(b)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -64,10 +65,10 @@ func sign(a agent.Agent, b string) {
 	for i, k := range keys {
 		sig, err := a.Sign(k, data)
 		if err != nil {
-			println(err)
+			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Fprintf(w, "%d\t%i\t%s\t%s\t%s\n", i, sig.Format, base64.StdEncoding.EncodeToString(sig.Blob))
+		fmt.Fprintf(w, "%d\t%s %s\n", i, sig.Format, base64.StdEncoding.EncodeToString(sig.Blob))
 		w.Flush()
 	}
 }
@@ -75,35 +76,41 @@ func sign(a agent.Agent, b string) {
 func verify(a agent.Agent, b string, sFormat string, s string) {
 	keys, err := a.List()
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	data, err := base64.StdEncoding.DecodeString(b)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	sigData, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	sig := ssh
+	sig := &ssh.Signature{sFormat, sigData}
 
 	w := new(tabwriter.Writer)
 	// Format in tab-separated columns with a tab stop of 8.
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
 	for i, k := range keys {
-		sig, err := k.Verify(data, sig)
+		mKey := k.Marshal()
+		verifyKey, err := ssh.ParsePublicKey(mKey)
 		if err != nil {
-			println(err)
+			fmt.Println(err.Error())
 			os.Exit(1)
 		}
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, sig.Format, base64.StdEncoding.EncodeToString(sig.Blob))
+		ok := true
+		err = verifyKey.Verify(data, sig)
+		if err != nil {
+			ok = false
+		}
+		fmt.Fprintf(w, "%d\tverified: %t\n", i, ok)
 		w.Flush()
 	}
 }
@@ -111,7 +118,7 @@ func verify(a agent.Agent, b string, sFormat string, s string) {
 func main() {
 	a, err := agentFromAuthSock()
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -135,6 +142,10 @@ features for use by other tools besides ssh clients.`,
 		Use:   "sign",
 		Short: "Sign a base64 encoded string",
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				fmt.Println("sign takes a single base64 encoded string to sign")
+				os.Exit(1)
+			}
 			sign(a, args[0])
 		},
 	}
@@ -143,12 +154,16 @@ features for use by other tools besides ssh clients.`,
 		Use:   "verify",
 		Short: "Verify a base64 encoded string and signature",
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) != 3 {
+				fmt.Println("verify takes a single base64 encoded string verify, a signature type, and a base64 encoded signature")
+				os.Exit(1)
+			}
 			verify(a, args[0], args[1], args[2])
 		},
 	}
 
 	toolCmd.AddCommand(listKeysCmd)
 	toolCmd.AddCommand(signCmd)
-	toolCmd.AddCommand(verify)
+	toolCmd.AddCommand(verifyCmd)
 	toolCmd.Execute()
 }
