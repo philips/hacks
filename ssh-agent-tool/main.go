@@ -40,7 +40,7 @@ func listKeys(a agent.Agent) {
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)
 
 	for i, k := range keys {
-		fmt.Fprintf(w, "%d\t%s\t%s\t%s\n", i, k.Format, base64.StdEncoding.EncodeToString(k.Blob), k.Comment)
+		fmt.Fprintf(w, "%02d: %s\t%s\t%s\n", i, k.Format, base64.StdEncoding.EncodeToString(k.Blob), k.Comment)
 		w.Flush()
 	}
 }
@@ -68,7 +68,7 @@ func sign(a agent.Agent, b string) {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Fprintf(w, "%d\t%s %s\n", i, sig.Format, base64.StdEncoding.EncodeToString(sig.Blob))
+		fmt.Fprintf(w, "%02d: %s %s\n", i, sig.Format, base64.StdEncoding.EncodeToString(sig.Blob))
 		w.Flush()
 	}
 }
@@ -110,7 +110,7 @@ func verify(a agent.Agent, b string, sFormat string, s string) {
 		if err != nil {
 			ok = false
 		}
-		fmt.Fprintf(w, "%d\tverified: %t\n", i, ok)
+		fmt.Fprintf(w, "%02d: verified: %t\n", i, ok)
 		w.Flush()
 	}
 }
