@@ -12,7 +12,10 @@ package gateway
 import (
 	"encoding/json"
 	"io"
+	"log"
+	"net"
 	"net/http"
+	"time"
 
 	"github.com/gengo/grpc-gateway/runtime"
 	"github.com/golang/glog"
@@ -34,14 +37,15 @@ func request_YourService_Echo(ctx context.Context, client pb.YourServiceClient, 
 	if err = json.NewDecoder(req.Body).Decode(&protoReq); err != nil {
 		return nil, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	return client.Echo(ctx, &protoReq)
 }
 
 // RegisterYourServiceHandlerFromEndpoint is same as RegisterYourServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterYourServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string) (err error) {
-	conn, err := grpc.Dial(endpoint)
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithDialer(httpDial))
+	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
 	}
@@ -85,3 +89,31 @@ func RegisterYourServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn
 var (
 	pattern_YourService_Echo = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "example", "echo"}, ""))
 )
+
+func httpDial(addr string, timeout time.Duration) (net.Conn, error) {
+	log.Println("gateway dial...")
+	conn, err := net.Dial("tcp", addr)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println("write HTTP line")
+	_, err = conn.Write([]byte("GET /grpc HTTP/1.1\r\n"))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	log.Println("write Header line")
+	_, err = conn.Write([]byte("HOST: " + addr + "\r\n\r\n"))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	// handshake
+	b := make([]byte, 2)
+	_, err = conn.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
