@@ -277,26 +277,50 @@ vagrant destroy -f core-03
 
 # Securing etcd
 
-Now that we have good practice with cluster operations lets add transport 
+Now that we have good practice with cluster operations of etcd under network partition, adding/removing members, and backups lets add transport security to the machine that will act as our etcd machine: core-01.
 
 ```
 vagrant up
 vagrant ssh-config > ssh-config
 ```
 
+First, lets generate a certificate authority and some certificates signed by that authority.
 
-Now, lets make this available to the next step
+Now, lets prepare etcd to use a certificate and key file which we will generate
 
 ```
+ssh core-01
 sudo su 
+mkdir /etc/etcd
 mkdir /etc/systemd/system/etcd2.service.d/
 cat  <<EOM > /etc/systemd/system/etcd2.service.d/10-listen.conf
 [Service]
 Environment=ETCD_NAME=core-01
-Environment=ETCD_ADVERTISE_CLIENT_URLS=http://172.17.8.101:2379
-Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-Environment=ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+Environment=ETCD_ADVERTISE_CLIENT_URLS=https://localhost:2379
+Environment=ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379
+Environment=ETCD_CERT_FILE=/etc/etcd/etcd.pem
+Environment=ETCD_KEY_FILE=/etc/etcd/etcd-key.pem
 EOM
+```
+
+```
+scp 2015-kubecon/tls-setup/tls/certs/etcd* core-01:
+scp 2015-kubecon/tls-setup/tls/certs/ca.pem core-01:
+```
+
+Setup the certificates 
+
+```
+ssh core-01
+sudo su
+mv etcd* /etc/etcd
+chown -R etcd: /etc/etcd
+systemctl daemon-reload
+systemctl start etcd2
+```
+
+```
+etcdctl --peers https://localhost:2379 --ca-file ca.pem set kubernetes is-ready
 ```
 
 ## Vagrant
