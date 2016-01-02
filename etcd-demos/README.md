@@ -28,13 +28,23 @@ skydns -addr 127.0.0.1:5355
 ```
 
 ```
-etcdctl set /skydns/local/skydns/east/production/rails     '{"host":"service6.example.com","priority":20}'
-dig -p 5355 @127.0.0.1 SRV rails.production.east.skydns.local
+etcdctl set /skydns/local/skydns/east/production/mail     '{"host":"mail-east.example.com","priority":20}'
+dig -p 5355 @127.0.0.1 SRV mail.production.east.skydns.local
 ```
 
 ```
-etcdctl set /skydns/local/skydns/east/production/mail     '{"host":"mail.example.com","priority":20}'
-dig -p 5355 @127.0.0.1 SRV mail.production.east.skydns.local
+etcdctl set /skydns/local/skydns/west/production/mail     '{"host":"mail-est.example.com","priority":20}'
+dig -p 5355 @127.0.0.1 SRV mail.production.west.skydns.local
+```
+
+```
+dig -p 5355 @127.0.0.1 SRV mail.production.*.skydns.local
+```
+
+
+```
+etcdctl set /skydns/local/skydns/east/production/rails     '{"host":"service6.example.com","priority":20}'
+dig -p 5355 @127.0.0.1 SRV rails.production.east.skydns.local
 ```
 
 ```
@@ -42,6 +52,7 @@ dig -p 5355 @127.0.0.1 SRV production.east.skydns.local
 ```
 
 # confd - generate configuration files from etcd
+
 
 - Homepage: https://github.com/kelseyhightower/confd
 
