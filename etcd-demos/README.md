@@ -64,7 +64,7 @@ database_user = {{getv "/myapp/database/user"}}
 ```
 
 ```
-confd -onetime -backend etcd -node 127.0.0.1:2379 -confdir confd
+confd -watch -backend etcd -node 127.0.0.1:2379 -confdir confd
 ```
 
 # vulcand - an http load balancer
@@ -111,12 +111,12 @@ boom http://localhost:8181
 - example app: https://github.com/kubernetes/kubernetes/tree/master/examples/https-nginx
 
 ```
-./kubectl create -f secret.json
-./kubectl create -f nginx.yaml
+kubectl create -f secret.json
+kubectl create -f nginx.yaml
 ```
 
 ```
-./kubectl get service
+kubectl get service
 ```
 
 ```
