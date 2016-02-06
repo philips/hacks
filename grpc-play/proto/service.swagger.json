@@ -1,0 +1,56 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "",
+    "title": ""
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/example/echo": {
+      "post": {
+        "summary": "YourService.Echo",
+        "operationId": "Echo",
+        "responses": {
+          "default": {
+            "description": "Description",
+            "schema": {
+              "$ref": "#/definitions/protoStringMessage"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoStringMessage"
+            }
+          }
+        ],
+        "tags": [
+          "YourService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protoStringMessage": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    }
+  }
+}

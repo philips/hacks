@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package play is a generated protocol buffer package.
+Package proto is a generated protocol buffer package.
 
 It is generated from these files:
 	service.proto
@@ -13,9 +13,10 @@ It has these top-level messages:
 */
 package proto
 
-import proto "github.com/golang/protobuf/proto"
-
-// discarding unused import google_api1 "google/api"
+import proto1 "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/gengo/grpc-gateway/third_party/googleapis/google/api"
 
 import (
 	context "golang.org/x/net/context"
@@ -23,22 +24,30 @@ import (
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
+var _ = proto1.Marshal
+var _ = fmt.Errorf
+var _ = math.Inf
 
-// Reference imports to suppress errors if they are not otherwise used.
-var _ = proto.Marshal
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+const _ = proto1.ProtoPackageIsVersion1
 
 type StringMessage struct {
 	Value string `protobuf:"bytes,1,opt,name=value" json:"value,omitempty"`
 }
 
-func (m *StringMessage) Reset()         { *m = StringMessage{} }
-func (m *StringMessage) String() string { return proto.CompactTextString(m) }
-func (*StringMessage) ProtoMessage()    {}
+func (m *StringMessage) Reset()                    { *m = StringMessage{} }
+func (m *StringMessage) String() string            { return proto1.CompactTextString(m) }
+func (*StringMessage) ProtoMessage()               {}
+func (*StringMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 func init() {
+	proto1.RegisterType((*StringMessage)(nil), "proto.StringMessage")
 }
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
 
 // Client API for YourService service
 
@@ -56,7 +65,7 @@ func NewYourServiceClient(cc *grpc.ClientConn) YourServiceClient {
 
 func (c *yourServiceClient) Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error) {
 	out := new(StringMessage)
-	err := grpc.Invoke(ctx, "/play.YourService/Echo", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/proto.YourService/Echo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,9 +82,9 @@ func RegisterYourServiceServer(s *grpc.Server, srv YourServiceServer) {
 	s.RegisterService(&_YourService_serviceDesc, srv)
 }
 
-func _YourService_Echo_Handler(srv interface{}, ctx context.Context, codec grpc.Codec, buf []byte) (interface{}, error) {
+func _YourService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(StringMessage)
-	if err := codec.Unmarshal(buf, in); err != nil {
+	if err := dec(in); err != nil {
 		return nil, err
 	}
 	out, err := srv.(YourServiceServer).Echo(ctx, in)
@@ -86,7 +95,7 @@ func _YourService_Echo_Handler(srv interface{}, ctx context.Context, codec grpc.
 }
 
 var _YourService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "play.YourService",
+	ServiceName: "proto.YourService",
 	HandlerType: (*YourServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -95,4 +104,19 @@ var _YourService_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{},
+}
+
+var fileDescriptor0 = []byte{
+	// 163 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2d, 0x4e, 0x2d, 0x2a,
+	0xcb, 0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x52, 0x32, 0xe9,
+	0xf9, 0xf9, 0xe9, 0x39, 0xa9, 0xfa, 0x89, 0x05, 0x99, 0xfa, 0x89, 0x79, 0x79, 0xf9, 0x25, 0x89,
+	0x25, 0x99, 0xf9, 0x79, 0xc5, 0x10, 0x45, 0x4a, 0x72, 0x5c, 0xbc, 0xc1, 0x25, 0x45, 0x99, 0x79,
+	0xe9, 0xbe, 0xa9, 0xc5, 0xc5, 0x89, 0xe9, 0xa9, 0x42, 0xbc, 0x5c, 0xac, 0x65, 0x89, 0x39, 0xa5,
+	0xa9, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c, 0x46, 0x71, 0x5c, 0xdc, 0x91, 0xf9, 0xa5, 0x45, 0xc1,
+	0x10, 0x93, 0x85, 0xfc, 0xb9, 0x58, 0x5c, 0x93, 0x33, 0xf2, 0x85, 0x44, 0x20, 0xda, 0xf5, 0x50,
+	0xf4, 0x4a, 0x61, 0x15, 0x55, 0x92, 0x6e, 0xba, 0xfc, 0x64, 0x32, 0x93, 0xa8, 0x92, 0x80, 0x7e,
+	0x99, 0xa1, 0x7e, 0x6a, 0x45, 0x62, 0x6e, 0x01, 0xd0, 0x35, 0xa9, 0x40, 0x53, 0xac, 0x18, 0xb5,
+	0x92, 0xd8, 0xc0, 0x3a, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x8e, 0x95, 0x36, 0xb9, 0xbc,
+	0x00, 0x00, 0x00,
 }
