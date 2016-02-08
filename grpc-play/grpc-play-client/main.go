@@ -21,7 +21,6 @@ var (
 func main() {
 	flag.Parse()
 	var opts []grpc.DialOption
-	if *tls {
 		var sn string
 		if *serverHostOverride != "" {
 			sn = *serverHostOverride
@@ -38,7 +37,6 @@ func main() {
 		}
 		opts = append(opts, grpc.WithTransportCredentials(creds))
 	}
-	opts = append(opts, grpc.WithInsecure())
 	conn, err := grpc.Dial(*serverAddr, opts...)
 	if err != nil {
 		grpclog.Fatalf("fail to dial: %v", err)
