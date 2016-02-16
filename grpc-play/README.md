@@ -10,7 +10,7 @@ $ go install github.com/philips/hacks/grpc-play
 
 $ grpc-play
 $ grpc-play-client "my first rpc echo"
-$ curl -X POST localhost:8080/v1/example/echo -H "Content-Type: text/plain"  -d '{"value":"my REST echo"}'
+$ curl -X POST -k https://localhost:10000/v1/example/echo -H "Content-Type: text/plain" -d '{"value": "foo"}'
 {"value":"my REST echo"}
 ```
 

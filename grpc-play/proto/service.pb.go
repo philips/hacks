@@ -11,11 +11,12 @@ It is generated from these files:
 It has these top-level messages:
 	StringMessage
 */
-package proto
+package play
 
 import proto "github.com/golang/protobuf/proto"
-
-// discarding unused import google_api1 "google/api"
+import fmt "fmt"
+import math "math"
+import _ "github.com/gengo/grpc-gateway/third_party/googleapis/google/api"
 
 import (
 	context "golang.org/x/net/context"
@@ -23,22 +24,30 @@ import (
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
-
-// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
+var _ = fmt.Errorf
+var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+const _ = proto.ProtoPackageIsVersion1
 
 type StringMessage struct {
 	Value string `protobuf:"bytes,1,opt,name=value" json:"value,omitempty"`
 }
 
-func (m *StringMessage) Reset()         { *m = StringMessage{} }
-func (m *StringMessage) String() string { return proto.CompactTextString(m) }
-func (*StringMessage) ProtoMessage()    {}
+func (m *StringMessage) Reset()                    { *m = StringMessage{} }
+func (m *StringMessage) String() string            { return proto.CompactTextString(m) }
+func (*StringMessage) ProtoMessage()               {}
+func (*StringMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 func init() {
+	proto.RegisterType((*StringMessage)(nil), "play.StringMessage")
 }
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
 
 // Client API for YourService service
 
@@ -73,9 +82,9 @@ func RegisterYourServiceServer(s *grpc.Server, srv YourServiceServer) {
 	s.RegisterService(&_YourService_serviceDesc, srv)
 }
 
-func _YourService_Echo_Handler(srv interface{}, ctx context.Context, codec grpc.Codec, buf []byte) (interface{}, error) {
+func _YourService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(StringMessage)
-	if err := codec.Unmarshal(buf, in); err != nil {
+	if err := dec(in); err != nil {
 		return nil, err
 	}
 	out, err := srv.(YourServiceServer).Echo(ctx, in)
@@ -95,4 +104,19 @@ var _YourService_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{},
+}
+
+var fileDescriptor0 = []byte{
+	// 169 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2d, 0x4e, 0x2d, 0x2a,
+	0xcb, 0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x29, 0xc8, 0x49, 0xac, 0x94,
+	0x92, 0x49, 0xcf, 0xcf, 0x4f, 0xcf, 0x49, 0xd5, 0x4f, 0x2c, 0xc8, 0xd4, 0x4f, 0xcc, 0xcb, 0xcb,
+	0x2f, 0x49, 0x2c, 0xc9, 0xcc, 0xcf, 0x2b, 0x86, 0xa8, 0x51, 0x52, 0xe5, 0xe2, 0x0d, 0x2e, 0x29,
+	0xca, 0xcc, 0x4b, 0xf7, 0x4d, 0x2d, 0x2e, 0x4e, 0x4c, 0x4f, 0x15, 0x12, 0xe1, 0x62, 0x2d, 0x4b,
+	0xcc, 0x29, 0x4d, 0x95, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0x70, 0x8c, 0x62, 0xb8, 0xb8,
+	0x23, 0xf3, 0x4b, 0x8b, 0x82, 0x21, 0xe6, 0x0b, 0xf9, 0x72, 0xb1, 0xb8, 0x26, 0x67, 0xe4, 0x0b,
+	0x09, 0xeb, 0x81, 0xac, 0xd0, 0x43, 0x31, 0x41, 0x0a, 0x9b, 0xa0, 0x92, 0x74, 0xd3, 0xe5, 0x27,
+	0x93, 0x99, 0x44, 0x95, 0x04, 0xf4, 0xcb, 0x0c, 0xf5, 0x53, 0x2b, 0x12, 0x73, 0x0b, 0x80, 0x4e,
+	0x4a, 0x05, 0x9a, 0x61, 0xc5, 0xa8, 0x95, 0xc4, 0x06, 0x76, 0x8b, 0x31, 0x20, 0x00, 0x00, 0xff,
+	0xff, 0x5a, 0xfd, 0xc7, 0xa5, 0xc0, 0x00, 0x00, 0x00,
 }
