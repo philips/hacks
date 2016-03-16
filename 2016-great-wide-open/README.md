@@ -56,4 +56,4 @@ This is going to setup a three tier app with a load balancer, web app, and datab
 for i in *.json; do kubectl create --namespace=guestbook -f ${i}; done
 ```
 
-Visit http://172.17.4.202:30002/
+Visit http://172.17.4.99:30002/
