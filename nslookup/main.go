@@ -16,31 +16,56 @@ func aFmt(record *dns.A) string {
 	return fmt.Sprintf("'%s' ttl: %d", record.A.String(), record.Hdr.Ttl)
 }
 
-func find(host string) (status string, ttl uint32, found bool) {
+func newMsg(host string, qClass uint16) *dns.Msg {
 	m1 := new(dns.Msg)
 	m1.Id = dns.Id()
 	m1.RecursionDesired = true
 	m1.Question = make([]dns.Question, 1)
-	m1.Question[0] = dns.Question{host, dns.TypeA, dns.ClassINET}
+	m1.Question[0] = dns.Question{host, qClass, dns.ClassINET}
+	return m1
+}
 
+func makeRequest(ns string, msg *dns.Msg) (*dns.Msg, error) {
 	c := new(dns.Client)
-	in, _, err := c.Exchange(m1, "8.8.8.8:53")
+	resp, _, err := c.Exchange(msg, ns)
 
 	if err != nil {
-		return fmt.Sprintf("Error on query for '%s': %v", host, err), 0, false
+		return nil, fmt.Errorf("Error on query for '%s': %v", ns, err)
+	}
+	return resp, nil
+}
+
+func find(host string) (status string, ttl uint32, found bool) {
+	// get SOA record
+	reqNS := newMsg(host, dns.TypeSOA)
+	resp, err := makeRequest("8.8.8.8:53", reqNS)
+	if err != nil {
+		return fmt.Sprintf("could not retrieve SOA record: %v", err), 0, false
+	} else if len(resp.Ns) < 1 {
+		return "no SOA record found", 0, false
 	}
 
-	if len(in.Answer) == 0 {
-		var longest dns.RR_Header
-		for _, n := range in.Ns {
-			if n.Header().Ttl > longest.Ttl {
-				longest = *n.Header()
-			}
-		}
-		return fmt.Sprintf("No answer on query for '%s'. Waiting for timeout of authoritative record %s", host, rrHeaderFmt(longest)), longest.Ttl, false
+	ns := resp.Ns[0].(*dns.SOA).Ns
+
+	// resolve authoritative nameserver
+	nsReqA := newMsg(ns, dns.TypeA)
+	resp, err = makeRequest("8.8.8.8:53", nsReqA)
+	if err != nil {
+		return fmt.Sprintf("could not resolve authoritative ns: %v", err), 0, false
+	} else if len(resp.Answer) < 1 {
+		return "Authoratiative NS domain does not have an A record", 0, false
 	}
 
-	return fmt.Sprintf("Got answer on query for '%s': %v", host, aFmt(in.Answer[0].(*dns.A))), 0, true
+	// request A record from authoritative name server
+	reqA := newMsg(host, dns.TypeA)
+	resp, err = makeRequest(resp.Answer[0].(*dns.A).A.String()+":53", reqA)
+	if err != nil {
+		return err.Error(), 0, false
+	} else if len(resp.Answer) < 1 {
+		return "Domain does not have an A record", 0, false
+	}
+
+	return fmt.Sprintf("Got answer on query for '%s': %v", host, aFmt(resp.Answer[0].(*dns.A))), 0, true
 }
 
 func main() {
