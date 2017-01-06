@@ -2,7 +2,6 @@ package main
 
 import (
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -47,7 +46,6 @@ func NewHost() Host {
 	h := Host{}
 
 	hostname, _ := os.Hostname()
-	machine := hostname
 
 	h.Hostname = hostname
 	interfaces, _ := net.Interfaces()
