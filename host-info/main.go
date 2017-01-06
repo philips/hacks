@@ -47,10 +47,7 @@ func NewHost() Host {
 	h := Host{}
 
 	hostname, _ := os.Hostname()
-	machine, err := ioutil.ReadFile("/etc/machine-id")
-	if err == nil {
-		hostname = string(machine)
-	}
+	machine := hostname
 
 	h.Hostname = hostname
 	interfaces, _ := net.Interfaces()
@@ -104,7 +101,7 @@ func iconHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	addr := ":5483"
+	addr := ":8080"
 
 	hostInfo := NewHost()
 
