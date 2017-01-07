@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"log"
 	"net"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"sync/atomic"
 	"text/template"
+	"time"
 
 	"github.com/philips/hacks/host-info/Godeps/_workspace/src/github.com/dgryski/go-identicon"
 )
@@ -21,8 +23,9 @@ const (
 	</head>
 	<body>
 		<img style="float: right; padding: 30px; position: relative; width: 30%; display: inline;" src="/icons/{{.Hostname}}.png" />
+		<h1><p>You are visitor: {{.VisitCount}}</p><h1>
 		<h1>{{.Hostname}}</h1>
-		<p>You are visitor: {{.VisitCount}}</p>
+		<h1>{{.Zone}}</h1>
 		<h2>Networking</h2>
 		{{range .Interfaces}}
 			<h3>{{.Name}}</h3>
@@ -37,9 +40,10 @@ const (
 )
 
 type Host struct {
-	Hostname   string
-	Interfaces []net.Interface
 	VisitCount uint64
+	Hostname   string
+	Zone       string
+	Interfaces []net.Interface
 }
 
 func NewHost() Host {
@@ -50,6 +54,7 @@ func NewHost() Host {
 	h.Hostname = hostname
 	interfaces, _ := net.Interfaces()
 	h.Interfaces = interfaces
+	h.Zone = getZone()
 	return h
 }
 
@@ -96,6 +101,25 @@ func iconHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(pngdata)
 
 	return
+}
+
+const zoneUrl string = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
+
+func getZone() string {
+	timeout := time.Duration(10 * time.Millisecond)
+	client := &http.Client{Timeout: timeout}
+	req, err := http.NewRequest("GET", zoneUrl, nil)
+	req.Header.Add("Metadata-Flavor", "Google")
+	response, err := client.Do(req)
+	if err != nil {
+		return ("Unknown Zone")
+	} else {
+		defer response.Body.Close()
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(response.Body)
+		zoneSplit := strings.Split(buf.String(), "/")
+		return zoneSplit[len(zoneSplit)-1]
+	}
 }
 
 func main() {
