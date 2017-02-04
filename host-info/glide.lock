@@ -1,8 +1,36 @@
-hash: 49edb25993e4a924c4f797ad13f9b4755dfd5313c2bfb17561d026424b777cdc
-updated: 2017-02-04T03:42:05.096536155+01:00
+hash: 42454349a7cbc4ea5be5c799b687ebc4e45d67787fdf0ff9b6e8d2059bef7bb1
+updated: 2017-02-04T03:52:29.964897144+01:00
 imports:
+- name: github.com/beorn7/perks
+  version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
+  subpackages:
+  - quantile
 - name: github.com/dchest/siphash
   version: 8f8998549bb000140299d732e93d79c2d5ddffa7
 - name: github.com/dgryski/go-identicon
   version: 371855927d74dba898c75122917a0ebe1e146879
+- name: github.com/golang/protobuf
+  version: 8616e8ee5e20a1704615e6c8d7afcdac06087a67
+  subpackages:
+  - proto
+- name: github.com/matttproud/golang_protobuf_extensions
+  version: c12348ce28de40eed0136aa2b644d0ee0650e56c
+  subpackages:
+  - pbutil
+- name: github.com/prometheus/client_golang
+  version: d38f1ef46f0d78136db3e585f7ebe1bcc3476f73
+  subpackages:
+  - prometheus
+- name: github.com/prometheus/client_model
+  version: fa8ad6fec33561be4280a8f0514318c79d7f6cb6
+  subpackages:
+  - go
+- name: github.com/prometheus/common
+  version: dd2f054febf4a6c00f2343686efb775948a8bff4
+  subpackages:
+  - expfmt
+  - internal/bitbucket.org/ww/goautoneg
+  - model
+- name: github.com/prometheus/procfs
+  version: 1878d9fbb537119d24b21ca07effd591627cd160
 testImports: []

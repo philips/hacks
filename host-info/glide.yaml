@@ -4,3 +4,5 @@ import:
   version: 8f8998549bb000140299d732e93d79c2d5ddffa7
 - package: github.com/dgryski/go-identicon
   version: 371855927d74dba898c75122917a0ebe1e146879
+- package: github.com/prometheus/client_golang/prometheus
+  version: d38f1ef46f0d78136db3e585f7ebe1bcc3476f73
