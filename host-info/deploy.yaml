@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-info
+  labels:
+    app: host-info
+spec:
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: host-info
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: Prometheus
+metadata:
+  name: host-info-prometheus
+  labels:
+    prometheus: host-info-prometheus
+spec:
+  version: v1.4.0
+  replicas: 2
+  serviceMonitorSelector:
+    matchExpressions:
+      - {key: app, operator: In, values: [host-info]}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-info-prometheus
+spec:
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: web
+  selector:
+    prometheus: host-info-prometheus
+---
+apiVersion: "monitoring.coreos.com/v1alpha1"
+kind: "ServiceMonitor"
+metadata:
+  name: "host-info"
+  labels:
+    app: host-info
+spec:
+  selector:
+    matchLabels:
+      app: host-info
+  endpoints:
+  - port: web
+    interval: 1s
