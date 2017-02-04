@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 	"text/template"
 
-	"github.com/philips/hacks/host-info/Godeps/_workspace/src/github.com/dgryski/go-identicon"
+	"github.com/dgryski/go-identicon"
 )
 
 const (
