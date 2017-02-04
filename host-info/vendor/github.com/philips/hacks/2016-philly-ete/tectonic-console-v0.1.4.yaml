@@ -1,0 +1,69 @@
+# This file contains almost everything you need to run
+# tectonic-console on your cluster! You'll also need to
+# get a pull secret from tectonic.com so you can authorize
+# your cluster to pull the container image for the console.
+# The pull secret should be named "coreos-pull-secret"
+# and be installed in the default namespace.
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    tectonic-app: console
+    tectonic-component: ui
+    tectonic-version: v0.1.4
+  name: tectonic-console-v0.1.4
+spec:
+  replicas: 2
+  selector:
+    tectonic-app: console
+    tectonic-component: ui
+    tectonic-version: v0.1.4
+  template:
+    metadata:
+      labels:
+        tectonic-app: console
+        tectonic-component: ui
+        tectonic-version: v0.1.4
+      name: tectonic-console-v0.1.4
+    spec:
+      containers:
+        - command:
+            - sh
+            - "-c"
+            - "/opt/bridge/bin/bridge"
+          env:
+            - name: BRIDGE_K8S_IN_CLUSTER
+              value: "true"
+            - name: BRIDGE_HOST
+              value: "http://example.com/dummy-value"
+            - name: BRIDGE_DISABLE_AUTH
+              value: "true"
+            - name: BRIDGE_PUBLIC_DIR
+              value: /opt/bridge/static
+            - name: BRIDGE_TECTONIC_VERSION
+              value: v0.1.4
+            - name: BRIDGE_IDENTITY_FILE
+              value: /etc/coreos-pull-secret/.dockercfg
+          image: quay.io/coreos/tectonic-console:v0.1.4
+          name: tectonic-console
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 50m
+              memory: 50Mi
+          volumeMounts:
+            - name: coreos-pull-secret
+              mountPath: /etc/coreos-pull-secret
+              readOnly: true
+          terminationMessagePath: /dev/termination-log
+      volumes:
+        - name: coreos-pull-secret
+          secret:
+            secretName: coreos-pull-secret
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: coreos-pull-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

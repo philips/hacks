@@ -1,0 +1,13 @@
+hash: 49edb25993e4a924c4f797ad13f9b4755dfd5313c2bfb17561d026424b777cdc
+updated: 2017-02-04T03:42:05.096536155+01:00
+imports:
+- name: github.com/dchest/siphash
+  version: 8f8998549bb000140299d732e93d79c2d5ddffa7
+- name: github.com/dgryski/go-identicon
+  version: 371855927d74dba898c75122917a0ebe1e146879
+- name: github.com/philips/hacks
+  version: d107f71c50265ca7459255bd35d6b55ecdfe2ff9
+  subpackages:
+  - host-info/Godeps/_workspace/src/github.com/dchest/siphash
+  - host-info/Godeps/_workspace/src/github.com/dgryski/go-identicon
+testImports: []

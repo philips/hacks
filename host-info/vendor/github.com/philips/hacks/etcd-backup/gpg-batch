@@ -1,0 +1,12 @@
+%echo Generating a default key
+Key-Type: 1
+Subkey-Type: 1
+Name-Real: Brandon Philips
+Name-Comment: ACI signing key
+Name-Email: brandon.philips@coreos.com
+Expire-Date: 0
+Passphrase: rkt
+%pubring rkt.pub
+%secring rkt.sec
+%commit
+%echo done
