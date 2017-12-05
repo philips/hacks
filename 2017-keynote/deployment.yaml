@@ -1,0 +1,39 @@
+apiVersion: v1
+items:
+- apiVersion: vault.security.coreos.com/v1alpha1
+  kind: VaultService
+  metadata:
+    clusterName: ""
+    creationTimestamp: 2017-12-01T23:34:32Z
+    generation: 0
+    name: example
+    namespace: default
+    resourceVersion: "10565469"
+    selfLink: /apis/vault.security.coreos.com/v1alpha1/namespaces/default/vaultservices/example
+    uid: 2eef33da-d6f0-11e7-9ca7-06a566138fa2
+  spec:
+    TLS:
+      static:
+        clientSecret: example-default-vault-client-tls
+        serverSecret: example-default-vault-server-tls
+    baseImage: quay.io/coreos/vault
+    configMapName: ""
+    nodes: 2
+    version: 0.8.3-0
+  status:
+    activeNode: ""
+    availableNodes:
+    - example-2199347398-nnpzb
+    - example-2199347398-r2hrs
+    initialized: false
+    sealedNodes:
+    - example-2199347398-nnpzb
+    - example-2199347398-r2hrs
+    standbyNodes: null
+    updatedNodes:
+    - example-2199347398-nnpzb
+    - example-2199347398-r2hrs
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
